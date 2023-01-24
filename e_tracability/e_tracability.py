@@ -48,16 +48,16 @@ def checkAttributes(layer, geometryType):
             iface.messageBar().pushMessage("Error", "Layer is not editable", level=Qgis.Critical, duration=5)
             exit
     # Check if author is present
-    checkAttribute(layer, 'Author', QVariant.String, '@user_full_name', False)
-    checkAttribute(layer, 'Date Created', QVariant.DateTime, 'now()', False)
-    checkAttribute(layer, 'Date Updated', QVariant.DateTime, 'now()', True)
+    checkAttribute(layer, 'author','Author', QVariant.String, '@user_full_name', False)
+    checkAttribute(layer, 'created','Date Created', QVariant.DateTime, 'now()', False)
+    checkAttribute(layer, 'updated','Date Updated', QVariant.DateTime, 'now()', True)
 
     if geometryType == QgsWkbTypes.LineGeometry:
-        checkAttribute(layer, 'length', QVariant.Int, '$length', True)
+        checkAttribute(layer, 'length','length', QVariant.Int, '$length', True)
         updateAttribute(layer, 'length')
                 
     if geometryType == QgsWkbTypes.PolygonGeometry:
-        checkAttribute(layer, 'area', QVariant.Double, 'round($area,4)', True)
+        checkAttribute(layer, 'area','area', QVariant.Double, 'round($area,4)', True)
         updateAttribute(layer, 'area')
         
     layer.updateFields()
@@ -70,7 +70,7 @@ def setReadOnlyAttribute(layer, attribute_index):
     form_config.setReadOnly(attribute_index, True)
     layer.setEditFormConfig(form_config)
 
-def checkAttribute(layer, attribute_name, attribute_type, default_value, applyOnUpdate, readOnly = True):
+def checkAttribute(layer, attribute_name, alias, attribute_type, default_value, applyOnUpdate, readOnly = True):
     # Check if attribute is present
     attributeIndex = layer.fields().indexFromName(attribute_name)
     if attributeIndex == -1:
@@ -78,6 +78,14 @@ def checkAttribute(layer, attribute_name, attribute_type, default_value, applyOn
         if (layer.addAttribute(QgsField(attribute_name, attribute_type))):
             attributeIndex = layer.fields().indexFromName(attribute_name)  
             setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOnly)
+            #Set the friendly alias for the layer
+            setAlias(layer, attributeIndex, alias)
+        #Because Shapefiles are a piece of crap....
+        elif (attribute_type == QVariant.DateTime):
+            checkAttribute(layer, attribute_name,alias, QVariant.Date, default_value, applyOnUpdate, readOnly)
+        else:
+            iface.messageBar().pushMessage("Error", "Error creating attribute " + attribute_name, level=Qgis.Critical, duration=5)
+            exit
     else:
         # If the attribute is present already, confirm the data type
         if layer.fields().field(attributeIndex).type() != attribute_type:
@@ -103,6 +111,9 @@ def setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOn
     layer.setDefaultValueDefinition(attributeIndex, QgsDefaultValue(default_value,applyOnUpdate=applyOnUpdate))
     if readOnly:
         setReadOnlyAttribute(layer, attributeIndex)
+
+def setAlias(layer, attributeIndex, alias):
+    layer.setFieldAlias(attributeIndex, alias)
 
 class eTracability:
     """QGIS Plugin Implementation."""
