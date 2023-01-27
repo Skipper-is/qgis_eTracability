@@ -75,14 +75,17 @@ def checkAttribute(layer, attribute_name, alias, attribute_type, default_value, 
     attributeIndex = layer.fields().indexFromName(attribute_name)
     aliasIndex = layer.fields().indexFromName(alias)
     if attributeIndex == -1 and aliasIndex == -1:
+        print("Layer" + layer.name() + " does not have attribute " + attribute_name + " or alias " + alias)
         # If the attribute isn't present and the alias is also not present, create the column
         if (layer.addAttribute(QgsField(attribute_name, attribute_type))):
+            print("Layer" + layer.name() + " created attribute " + attribute_name)
             attributeIndex = layer.fields().indexFromName(attribute_name)  
             setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOnly)
             #Set the friendly alias for the layer
             setAlias(layer, attributeIndex, alias)
         #Because Shapefiles are a piece of crap....
         elif (attribute_type == QVariant.DateTime):
+            print("Layer" + layer.name() + " created attribute " + attribute_name + " as a Date, as it did not create it as a DateTime, possibly because the file is a shapefile")
             checkAttribute(layer, attribute_name,alias, QVariant.Date, default_value, applyOnUpdate, readOnly)
         else:
             iface.messageBar().pushMessage("Error", "Error creating attribute " + attribute_name, level=Qgis.Critical, duration=5)
@@ -92,14 +95,25 @@ def checkAttribute(layer, attribute_name, alias, attribute_type, default_value, 
         # If the attribute is present already, confirm the data type
         if layer.fields().field(attributeIndex).type() != attribute_type:
             # If the data type is wrong, delete the column and create it again
-            if (layer.deleteAttribute(attributeIndex)):
+
+            #Check whether the data type is a DateTime, but the column is a Date
+            if (layer.fields().field(attributeIndex).type() == QVariant.Date and attribute_type == QVariant.DateTime):
+                print("Layer" + layer.name() + " has attribute " + attribute_name + " as a Date, so it may be a shapefile, we'll just make sure the default value is set")
+                setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOnly)
+            
+            #Otherwise, delete the column and create it again
+            elif (layer.deleteAttribute(attributeIndex)):
+                
                 if (layer.addAttribute(QgsField(attribute_name, attribute_type))):
                     attributeIndex = layer.fields().indexFromName(attribute_name)
+                    print("Layer" + layer.name() + " created attribute " + attribute_name + "After deleting the previous, because the data types didn't match")
                     #Set the default values for the form
                     setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOnly)
                     # Set the default values for existing geometry
                     updateAttribute(layer, attribute_name)
         else:
+            # If the data type is correct, set the default values for the form
+            print("Layer" + layer.name() + " has attribute " + attribute_name + " with the correct data type, so we're just going to update the default values")
             setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOnly)
 
 #Set the attributes to the default value for existing geometry
