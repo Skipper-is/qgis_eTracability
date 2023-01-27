@@ -57,7 +57,7 @@ def checkAttributes(layer, geometryType):
         updateAttribute(layer, 'length')
                 
     if geometryType == QgsWkbTypes.PolygonGeometry:
-        checkAttribute(layer, 'area','area', QVariant.Double, 'round($area,4)', True)
+        checkAttribute(layer, 'area','area', QVariant.Double, 'round($area/10000,4)', True)
         updateAttribute(layer, 'area')
         
     layer.updateFields()
@@ -73,8 +73,9 @@ def setReadOnlyAttribute(layer, attribute_index):
 def checkAttribute(layer, attribute_name, alias, attribute_type, default_value, applyOnUpdate, readOnly = True):
     # Check if attribute is present
     attributeIndex = layer.fields().indexFromName(attribute_name)
-    if attributeIndex == -1:
-        # If the attribute isn't present, create the column
+    aliasIndex = layer.fields().indexFromName(alias)
+    if attributeIndex == -1 and aliasIndex == -1:
+        # If the attribute isn't present and the alias is also not present, create the column
         if (layer.addAttribute(QgsField(attribute_name, attribute_type))):
             attributeIndex = layer.fields().indexFromName(attribute_name)  
             setDefaultValues(layer, attributeIndex, default_value, applyOnUpdate, readOnly)
@@ -87,6 +88,7 @@ def checkAttribute(layer, attribute_name, alias, attribute_type, default_value, 
             iface.messageBar().pushMessage("Error", "Error creating attribute " + attribute_name, level=Qgis.Critical, duration=5)
             exit
     else:
+        attributeIndex = max(attributeIndex, aliasIndex)
         # If the attribute is present already, confirm the data type
         if layer.fields().field(attributeIndex).type() != attribute_type:
             # If the data type is wrong, delete the column and create it again

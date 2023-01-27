@@ -6,8 +6,8 @@
 name=eTracability Automatic Accountability Tracker
 qgisMinimumVersion=3.0
 description=This plugin adds automatic attributes to vector layers, that track who updated or created features, and when.
-version=0.2
-author=LC Ecological Services & DeltaV Geo
+version=0.4
+author=LC Ecological Services
 email=David@deltavgeo.co.uk
 
 about=This plugin adds automatic attributes to vector layers, that track who updated or created features, and when. Also adds automatic area and length calculations to Polygons and Lines. When clicking the eTracability menu item, it checks through your layers, and adds the auto-updating values for existing attributes, and adds in the columns where they don't already exist.
@@ -20,7 +20,11 @@ repository=https://github.com/Skipper-is/qgis_eTracability
 
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=
+	0.4
+	* Area units in ha, rather than m2 (Although depends on your projection)
+	0.3
+	* Updated error checking for columns with a different name, but the same alias
 
 # Tags are comma separated with spaces allowed
 tags=attribute, attribute edit, attribute table, field, vector
