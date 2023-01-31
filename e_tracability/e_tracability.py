@@ -262,10 +262,18 @@ class eTracability:
         icon_path = ':/plugins/e_tracability/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'eTracability'),
-            callback=self.run,
+            text=self.tr(u'eTracability - Current layer'),
+            callback=self.run_single,
             parent=self.iface.mainWindow())
 
+        # Icon for multi-layer processing
+        icon_path = ':/plugins/e_tracability/iconmultiple.png'
+        self.add_action(
+            icon_path,
+            text=self.tr(u'eTracability - All layers'),
+            callback=self.run,
+            parent=self.iface.mainWindow())
+        
         # will be set False in run()
         self.first_start = True
 
@@ -287,4 +295,12 @@ class eTracability:
         for layer in layerList.values():
             if layer.type() == QgsMapLayer.VectorLayer:
                 checkAttributes(layer, layer.geometryType())
+        iface.messageBar().pushMessage("eTracability", "Done!", level=Qgis.Info, duration=5)
+
+    def run_single(self):
+        project = QgsProject.instance()
+        # Get current layer
+        layer = self.iface.activeLayer()
+        if layer.type() == QgsMapLayer.VectorLayer:
+            checkAttributes(layer, layer.geometryType())
         iface.messageBar().pushMessage("eTracability", "Done!", level=Qgis.Info, duration=5)

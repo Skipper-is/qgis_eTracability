@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/e_tracability" >
         <file>icon.png</file>
+        <file>iconmultiple.png</file>
     </qresource>
 </RCC>

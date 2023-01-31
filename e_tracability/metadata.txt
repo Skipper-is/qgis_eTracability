@@ -21,6 +21,8 @@ repository=https://github.com/Skipper-is/qgis_eTracability
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
+	0.6
+	* Added action for single layer update
 	0.5
 	* An issue with shapefiles - If a date is used instead of a datetime, it was being removed every time and re-created
 	0.4
