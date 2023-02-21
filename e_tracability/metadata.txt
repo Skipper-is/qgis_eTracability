@@ -3,10 +3,10 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=eTracability Automatic Accountability Tracker
+name=eTraceability Automatic Accountability Tracker
 qgisMinimumVersion=3.0
 description=This plugin adds automatic attributes to vector layers, that track who updated or created features, and when.
-version=0.6
+version=0.7
 author=LC Ecological Services
 email=David@deltavgeo.co.uk
 

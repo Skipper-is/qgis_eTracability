@@ -262,7 +262,7 @@ class eTracability:
         icon_path = ':/plugins/e_tracability/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'eTracability - Current layer'),
+            text=self.tr(u'eTraceability - Current layer'),
             callback=self.run_single,
             parent=self.iface.mainWindow())
 
@@ -270,7 +270,7 @@ class eTracability:
         icon_path = ':/plugins/e_tracability/iconmultiple.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'eTracability - All layers'),
+            text=self.tr(u'eTraceability - All layers'),
             callback=self.run,
             parent=self.iface.mainWindow())
         
@@ -282,7 +282,7 @@ class eTracability:
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginVectorMenu(
-                self.tr(u'&eTracability Automatic Accountability Tracker'),
+                self.tr(u'&eTraceability Automatic Accountability Tracker'),
                 action)
             self.iface.removeToolBarIcon(action)
 
@@ -295,7 +295,7 @@ class eTracability:
         for layer in layerList.values():
             if layer.type() == QgsMapLayer.VectorLayer:
                 checkAttributes(layer, layer.geometryType())
-        iface.messageBar().pushMessage("eTracability", "Done!", level=Qgis.Info, duration=5)
+        iface.messageBar().pushMessage("eTraceability", "Done!", level=Qgis.Info, duration=5)
 
     def run_single(self):
         project = QgsProject.instance()
@@ -303,4 +303,4 @@ class eTracability:
         layer = self.iface.activeLayer()
         if layer.type() == QgsMapLayer.VectorLayer:
             checkAttributes(layer, layer.geometryType())
-        iface.messageBar().pushMessage("eTracability", "Done!", level=Qgis.Info, duration=5)
+        iface.messageBar().pushMessage("eTraceability", "Done!", level=Qgis.Info, duration=5)
